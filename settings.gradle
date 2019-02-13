@@ -1,0 +1,3 @@
+
+def pom = new XmlSlurper().parse(new File(settingsDir, 'pom.xml'))
+rootProject.name = pom.name

@@ -1,0 +1,51 @@
+plugins {
+    id 'idea'
+    id 'java'
+    id 'maven'
+}
+
+def pom = new XmlSlurper().parse(new File(projectDir, 'pom.xml'))
+
+group pom.groupId
+version pom.version
+
+//defaultTasks 'jar'
+
+sourceCompatibility = JavaVersion.VERSION_1_10
+targetCompatibility = JavaVersion.VERSION_1_10
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+}
+
+// exclude javax.xml.parsers
+task printClasspath {
+    doLast {
+        configurations.testRuntime.each { println it }
+    }
+}
+
+dependencies {
+
+	compileOnly 'io.undertow:undertow-core:1.4.0.Final'
+	
+    testCompile 'junit:junit:4.12'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
